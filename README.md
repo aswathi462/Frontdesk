@@ -1,67 +1,474 @@
-# Frontdesk — Support Ticket Management
+# FRONTDESK – Customer Support Ticket Management System
 
-Full-stack hiring assessment implementation: React, FastAPI, PostgreSQL.
+FRONTDESK is a full-stack web application designed to help support teams manage customer service tickets efficiently.
 
-## Requirements
-Python 3.11+, Node 20+, PostgreSQL 14+.
+The system provides a centralized platform where authorized support agents can manage customer issues, track ticket progress, update ticket information, and monitor ticket resolution.
 
-## Backend setup
+The application is built using **React, FastAPI, and PostgreSQL** and is deployed using **Vercel, Render, and Neon**.
+
+## Live Application
+
+**Frontend:** https://frontdesk-dun.vercel.app
+
+**Backend API:** https://frontdesk-backend-wsx7.onrender.com
+
+**API Health Check:** https://frontdesk-backend-wsx7.onrender.com/health
+
+**GitHub Repository:** https://github.com/aswathi462/Frontdesk
+
+## Features
+
+- Secure support agent login using JWT authentication.
+- Centralized ticket management dashboard.
+- Create and manage customer support tickets.
+- View and track ticket information.
+- Update ticket details and statuses.
+- Support ticket assignment and resolution workflows.
+- Automatic ticket closure checks.
+- Persistent ticket storage using PostgreSQL.
+- REST API integration between frontend and backend.
+- Responsive web interface.
+
+## Technology Stack
+
+### Frontend
+- React.js
+- Vite
+- Tailwind CSS
+- Axios
+- JavaScript
+
+### Backend
+- Python
+- FastAPI
+- SQLAlchemy
+- JWT Authentication
+- Pydantic
+
+### Database
+- PostgreSQL
+- Neon PostgreSQL (Cloud)
+
+### Deployment
+- Vercel – Frontend hosting
+- Render – Backend hosting
+- Neon – PostgreSQL database
+- GitHub – Source code management
+
+## Project Structure
+
+```text
+Frontdesk/
+│
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── database.py
+│   │   └── ...
+│   ├── requirements.txt
+│   ├── seed.py
+│   └── .env.example
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── ...
+│
+├── .gitignore
+└── README.md
+```
+
+## Prerequisites
+
+Before running the project locally, install:
+
+- Python 3.11
+- Node.js and npm
+- Git
+- PostgreSQL (local database or Neon cloud database)
+- Visual Studio Code (recommended)
+
+## Installation and Setup
+
+### Step 1: Clone the Repository
+
+Open a terminal and run:
+
+```bash
+git clone https://github.com/aswathi462/Frontdesk.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd Frontdesk
+```
+
+### Step 2: Backend Setup
+
+Navigate to the backend folder:
+
 ```bash
 cd backend
-python -m venv .venv
-# Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env  # On Windows copy manually
 ```
-Create PostgreSQL database `frontdesk`. Edit `.env` with your PostgreSQL connection, a strong SECRET_KEY and allowed frontend URL.
 
-Seed demo agent (choose your own strong password):
+Create a Python virtual environment:
+
 ```bash
-# PowerShell: $env:SEED_PASSWORD="your-password"
-# Bash: export SEED_PASSWORD="your-password"
-python seed.py
+python -m venv .venv
+```
+
+Activate the virtual environment.
+
+**Windows Command Prompt:**
+
+```cmd
+.venv\Scripts\activate
+```
+
+**Windows PowerShell:**
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+**macOS / Linux:**
+
+```bash
+source .venv/bin/activate
+```
+
+Install the required Python dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+### Step 3: Configure Backend Environment Variables
+
+Create a `.env` file inside the `backend` folder.
+
+You can copy the provided `.env.example` file.
+
+**Windows:**
+
+```cmd
+copy .env.example .env
+```
+
+**macOS / Linux:**
+
+```bash
+cp .env.example .env
+```
+
+Update the `.env` file with your own values:
+
+```env
+DATABASE_URL=postgresql+psycopg://USERNAME:PASSWORD@HOST:5432/DATABASE_NAME
+SECRET_KEY=your-own-random-secret-key
+CORS_ORIGINS=http://localhost:5173
+TIMEZONE=Asia/Kolkata
+```
+
+**DATABASE_URL:** PostgreSQL connection string. You can use a local PostgreSQL database or a Neon cloud database.
+
+**SECRET_KEY:** Used for signing authentication tokens.
+
+Generate a secure secret key using:
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+**CORS_ORIGINS:** Specifies the frontend origin allowed to communicate with the backend.
+
+**TIMEZONE:** Application timezone.
+
+**Important:** Never commit the `.env` file, database passwords, or secret keys to GitHub.
+
+### Step 4: Initialize the Database
+
+Make sure your PostgreSQL database is running and `DATABASE_URL` is correctly configured.
+
+The backend uses SQLAlchemy to create the required database tables during application startup.
+
+Start the backend once to initialize the tables.
+
+### Step 5: Run the Backend
+
+From the `backend` directory, run:
+
+```bash
 uvicorn app.main:app --reload
 ```
-API docs: http://localhost:8000/docs
 
-## Frontend setup
+The backend will run at:
+
+http://localhost:8000
+
+Test the backend health endpoint:
+
+http://localhost:8000/health
+
+Expected response:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+Interactive API documentation is available at:
+
+http://localhost:8000/docs
+
+### Step 6: Create an Agent Account
+
+Open a second terminal inside the `backend` directory and activate the Python virtual environment.
+
+Set the agent email and password.
+
+**Windows Command Prompt:**
+
+```cmd
+set SEED_EMAIL=agent@frontdesk.test
+set /p SEED_PASSWORD=Enter agent password:
+python seed.py
+```
+
+**Windows PowerShell:**
+
+```powershell
+$env:SEED_EMAIL = "agent@frontdesk.test"
+$env:SEED_PASSWORD = Read-Host "Enter agent password"
+python seed.py
+```
+
+**macOS / Linux:**
+
+```bash
+export SEED_EMAIL=agent@frontdesk.test
+read -s -p "Enter agent password: " SEED_PASSWORD
+echo
+export SEED_PASSWORD
+python seed.py
+```
+
+Expected output:
+
+```text
+Agent ready: agent@frontdesk.test
+```
+
+The agent account is now available for login.
+
+Keep the password secure.
+
+### Step 7: Frontend Setup
+
+Open a new terminal.
+
+From the project root, navigate to the frontend folder:
+
 ```bash
 cd frontend
+```
+
+Install the frontend dependencies:
+
+```bash
 npm install
-# Copy .env.example to .env
+```
+
+### Step 8: Configure Frontend Environment Variables
+
+Create a `.env` file inside the `frontend` directory.
+
+Add:
+
+```env
+VITE_API_URL=http://localhost:8000
+```
+
+This connects the React frontend to the locally running FastAPI backend.
+
+### Step 9: Run the Frontend
+
+Start the frontend development server:
+
+```bash
 npm run dev
 ```
-Open http://localhost:5173 and sign in with the seeded email and password.
 
-## Deployment
-1. Provision a managed PostgreSQL database.
-2. On Render create a Python Web Service rooted at `backend`, build command `pip install -r requirements.txt`, start command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
-3. Set `DATABASE_URL`, `SECRET_KEY`, `CORS_ORIGINS` and `TIMEZONE` on Render. Use the provider's supported PostgreSQL URL.
-4. Create the agent by running `python seed.py` in a secure shell with `SEED_PASSWORD` set. Do not commit credentials. If the host has no shell, seed locally against the hosted DB using a secure connection.
-5. On Vercel deploy `frontend` with build command `npm run build`, output directory `dist`, environment variable `VITE_API_URL=https://YOUR-BACKEND.onrender.com`.
-6. Update Render `CORS_ORIGINS` to the exact deployed Vercel origin and redeploy. Verify `/health`, sign in and create a ticket.
-7. Ensure hosting remains active for seven days after submission; free services may sleep.
+Open the URL displayed in the terminal, normally:
 
-## Business-rule decisions
-- Working calendar: Monday–Friday, 09:30–18:30, Asia/Kolkata; holidays read from `holidays` table (populate real holiday dates before evaluation).
-- Medium response: 4.5 working hours; medium resolution: 27 working hours; low response: 9 working hours; low resolution: 45 working hours.
-- Urgent resolution: end of the current/next working day. Urgent response: 2 working hours.
-- Changing priority restarts the SLA budget at the moment of change; logged in history.
-- Waiting on customer pauses both SLA timers. Customer reply resumes remaining budget.
-- Stale waiting tickets close after 45 working hours (five working days) when maintenance is invoked.
-- Reopening allowed for five working days after resolution; a reopened ticket gets one working day to resolve (implementation assumption).
-- Claim uses a conditional atomic SQL UPDATE, returning HTTP 409 on a conflict.
-- Customer-facing message projection includes PUBLIC messages only. The endpoint is agent-authenticated; customer authentication is not implemented.
-- Audit log is append-only through the application API; DB administrators still have database-level modification powers.
+http://localhost:5173
 
-## Known limitations / completion note
-- Automatic closure currently requires calling `POST /api/maintenance/close-stale` as an authenticated agent; configure an authenticated scheduler for production automation.
-- No outbound email or independent customer portal; public replies are recorded in the system, not emailed.
-- No holiday management UI: holidays can be inserted into PostgreSQL `holidays` table.
-- No migrations, automated test suite, pagination beyond first 500 tickets, or granular admin roles.
-- SLA breach flags are evaluated on reads, and historical breach evidence is persisted for some transitions; a full immutable SLA event ledger is not implemented.
-- Demo customer reply entry is agent-operated and does not verify a customer identity.
+The FRONTDESK login page should appear.
 
-## Assessment submission
-Provide live URL, GitHub repo URL, this README and a truthful completion note describing unfinished work.
+## How to Use the Application
+
+### Agent Login
+
+1. Open the FRONTDESK application.
+2. Enter the registered agent email.
+3. Enter the password configured during account creation.
+4. Click **Sign In**.
+5. After successful authentication, access the support ticket dashboard.
+
+### Ticket Management
+
+Authorized agents can use the dashboard to work with customer support tickets.
+
+The application supports ticket creation, viewing ticket information, updating ticket details, and managing ticket progress.
+
+### Automatic Ticket Closure
+
+The backend runs a periodic check for tickets eligible for automatic closure according to the application's configured business rules.
+
+The check runs approximately every five minutes while the backend application process is running.
+
+## Live Deployment Details
+
+| Component | Platform | URL |
+|---|---|---|
+| Frontend | Vercel | https://frontdesk-dun.vercel.app |
+| Backend | Render | https://frontdesk-backend-wsx7.onrender.com |
+| Database | Neon | PostgreSQL cloud database |
+| Source Code | GitHub | https://github.com/aswathi462/Frontdesk |
+
+### Accessing the Deployed Application
+
+1. Open https://frontdesk-dun.vercel.app
+2. The agent login page will appear.
+3. Enter valid agent credentials.
+4. Click **Sign In** to access the dashboard.
+
+**Demo Agent Email:** `agent@frontdesk.test`
+
+**Demo Password:** `FrontDesk@2026#Secure91!`
+The application currently uses agent-based authentication. Customers do not have a separate public signup or ticket submission page.
+
+## Deployment Configuration
+
+### Backend Deployment – Render
+
+The backend is deployed as a Python web service.
+
+**Root Directory:**
+
+```text
+backend
+```
+
+**Build Command:**
+
+```bash
+pip install -r requirements.txt
+```
+
+**Start Command:**
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+**Environment Variables:**
+
+```env
+DATABASE_URL=<your-neon-postgresql-connection-string>
+SECRET_KEY=<your-secure-secret-key>
+CORS_ORIGINS=https://frontdesk-dun.vercel.app
+TIMEZONE=Asia/Kolkata
+PYTHON_VERSION=3.11.11
+```
+
+### Frontend Deployment – Vercel
+
+The frontend is deployed using Vercel.
+
+**Framework Preset:** Vite
+
+**Root Directory:**
+
+```text
+frontend
+```
+
+**Install Command:**
+
+```bash
+npm install
+```
+
+**Build Command:**
+
+```bash
+npm run build
+```
+
+**Output Directory:**
+
+```text
+dist
+```
+
+**Environment Variable:**
+
+```env
+VITE_API_URL=https://frontdesk-backend-wsx7.onrender.com
+```
+
+## API Documentation
+
+FastAPI automatically generates interactive API documentation.
+
+**Local API Docs:**
+
+http://localhost:8000/docs
+
+**Deployed API Docs:**
+
+https://frontdesk-backend-wsx7.onrender.com/docs
+
+These pages allow developers to inspect available API endpoints and their request/response structures.
+
+Protected endpoints require authentication.
+
+## Security
+
+- JWT-based authentication for protected application functionality.
+- Password hashing for stored agent credentials.
+- Environment variables for sensitive configuration.
+- CORS configuration for frontend-backend communication.
+- PostgreSQL database connectivity using environment-based credentials.
+- Sensitive `.env` files excluded from version control.
+
+## Known Limitations
+
+- The current deployment is focused on agent-based ticket management.
+- A separate public customer ticket submission interface is not included.
+- Demo credentials must be shared privately.
+- Free hosting services may experience startup delays after inactivity.
+- The automatic closure check runs within the backend process and depends on the application being active.
+
+## Future Enhancements
+
+- Public customer ticket submission portal.
+- Separate customer and agent accounts.
+- Customer ticket status tracking.
+- Email notifications for ticket updates.
+- Advanced ticket analytics and reporting.
+- Additional administrative controls.
+
+## Author
+
+Developed as a full-stack software development assessment project.
+
+**GitHub:** https://github.com/aswathi462
+
+---
+
+**FRONTDESK – A centralized platform for managing customer support tickets.**
